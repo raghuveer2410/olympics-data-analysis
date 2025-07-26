@@ -17,11 +17,15 @@ st.title("🏅 Olympics Data Analysis (1976–2008)")
 def load_data():
     df = pd.read_csv("data/Summer-Olympic-medals-1976-to-2008.csv", encoding="latin1")
     df.drop(['Event_gender', 'Country_Code'], axis=1, inplace=True)
+    
+    # Only drop rows where ALL columns are NaN
     df.dropna(how='all', inplace=True)
-    df.dropna(inplace=True)
+
+    # Drop rows with missing critical features only (NOT Medal!)
+    df.dropna(subset=['Athlete', 'Country', 'Sport', 'Gender', 'Year'], inplace=True)
+
     df['Year'] = df['Year'].astype(int)
     return df
-
 df = load_data()
 
 # Tabs
