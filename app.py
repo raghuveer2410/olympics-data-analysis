@@ -81,28 +81,32 @@ with tab3:
     X = df_ml[['Country', 'Sport', 'Gender']]
     y = df_ml['Medal_Flag']
 
+    # Split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-    model = LogisticRegression(max_iter=1000)
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
+    # ✅ Check for class diversity before training
+    if len(np.unique(y_train)) < 2:
+        st.error("⚠️ Not enough class variety in training data. Cannot train model.")
+    else:
+        model = LogisticRegression(max_iter=1000)
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
 
-    st.markdown("**Model Accuracy:** {:.2f}%".format(accuracy_score(y_test, y_pred) * 100))
+        st.markdown("**Model Accuracy:** {:.2f}%".format(accuracy_score(y_test, y_pred) * 100))
 
-    st.subheader("📍 Try a Prediction")
-    country = st.selectbox("Select Country", df['Country'].unique())
-    sport = st.selectbox("Select Sport", df['Sport'].unique())
-    gender = st.selectbox("Select Gender", ['Male', 'Female'])
+        st.subheader("📍 Try a Prediction")
+        country = st.selectbox("Select Country", df['Country'].unique())
+        sport = st.selectbox("Select Sport", df['Sport'].unique())
+        gender = st.selectbox("Select Gender", ['Male', 'Female'])
 
-    input_data = pd.DataFrame({
-        'Country': [le.transform([country])[0]],
-        'Sport': [le.transform([sport])[0]],
-        'Gender': [le.transform(['Men' if gender == 'Male' else 'Women'])[0]]
-    })
+        input_data = pd.DataFrame({
+            'Country': [le.transform([country])[0]],
+            'Sport': [le.transform([sport])[0]],
+            'Gender': [le.transform(['Men' if gender == 'Male' else 'Women'])[0]]
+        })
 
-    pred = model.predict(input_data)[0]
-    st.success("🏅 Likely to win a medal!" if pred == 1 else "❌ Not likely to win a medal.")
-
+        pred = model.predict(input_data)[0]
+        st.success("🏅 Likely to win a medal!" if pred == 1 else "❌ Not likely to win a medal.")
 with tab4:
     st.header("About the Project")
     st.markdown("""
