@@ -67,18 +67,16 @@ with tab2:
 with tab3:
     st.header("🎯 Predict Medal Win (Logistic Regression)")
     df_ml = df.copy()
-    df_ml['Medal'] = df_ml['Medal'].map({'Gold': 1, 'Silver': 1, 'Bronze': 1})
+    df_ml['Medal_Flag'] = df_ml['Medal'].apply(lambda x: 0 if pd.isna(x) else 1)
 
     # Encode categorical features
     le = LabelEncoder()
     for col in ['Country', 'Sport', 'Gender']:
         df_ml[col] = le.fit_transform(df_ml[col])
 
-    # Features & Target
     X = df_ml[['Country', 'Sport', 'Gender']]
-    y = df_ml['Medal']
+    y = df_ml['Medal_Flag']
 
-    # Split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
     model = LogisticRegression(max_iter=1000)
